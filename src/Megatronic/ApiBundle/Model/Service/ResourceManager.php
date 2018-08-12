@@ -6,7 +6,7 @@
  * Time: 12:33
  */
 
-namespace MegatronicApiBundle\Service;
+namespace MegatronicApiBundle\Model\Service;
 
 
 use MegatronicApiBundle\Model\IResourceManager;
