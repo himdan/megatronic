@@ -1,0 +1,6 @@
+megatronic_api_homepage:
+    path:     /
+    defaults: { _controller: MegatronicApiBundle:Default:index }
+megatronic_api_resource_list:
+    path:     /resources/list
+    defaults: { _controller: MegatronicApiBundle:MegatronicResource:list }

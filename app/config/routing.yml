@@ -1,0 +1,16 @@
+megatronic_api:
+    resource: "@MegatronicApiBundle/Resources/config/routing.yml"
+    prefix:   '/api'
+
+app:
+    resource: '@AppBundle/Controller/'
+    prefix: '/'
+    type: annotation
+fos_user:
+    resource: "@FOSUserBundle/Resources/config/routing/all.xml"
+login_json:
+    path: api_login_json
+#    controller: "fos_user.security.controller:loginAction"
+login_check_json:
+    path: api_login_json_check
+#    controller: "fos_user.security.controller:checkAction"
