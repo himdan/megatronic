@@ -12,8 +12,7 @@ class MegatronicResourceController extends BaseController
 
     public function listAction(Paginator $paginator)
     {
-        $megatronicResources = $paginator->paginate(MegatronicResource::class );
+        $megatronicResources = $paginator->paginate(MegatronicResource::class);
         return new JsonResponse($megatronicResources);
     }
-
 }

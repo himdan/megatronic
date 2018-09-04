@@ -8,14 +8,11 @@
 
 namespace MegatronicApiBundle\Model\Repository;
 
-
 use MegatronicApiBundle\Model\ISearch;
 use Doctrine\ODM\MongoDB\DocumentRepository;
 
- abstract  class AbstractDocumentRepository extends DocumentRepository implements ISearch
+abstract class AbstractDocumentRepository extends DocumentRepository implements ISearch
 {
 
-     use SearchTrait;
-
-
+    use SearchTrait;
 }

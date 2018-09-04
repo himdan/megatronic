@@ -8,13 +8,13 @@
 
 namespace MegatronicApiBundle\Model;
 
-
 interface IPaginate
 {
-    public function paginate($repositoryClass,
-                             $filters = array(),
-                             $getObj = false,
-                             $injectFilter = false,
-                             $orderSet = 0);
-
+    public function paginate(
+        $repositoryClass,
+        $filters = array(),
+        $getObj = false,
+        $injectFilter = false,
+        $orderSet = 0
+    );
 }

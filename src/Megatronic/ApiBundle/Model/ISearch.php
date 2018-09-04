@@ -8,13 +8,11 @@
 
 namespace MegatronicApiBundle\Model;
 
-
 interface ISearch
 {
 
     public function search($filters, $orderColumn, $orderDirection, $start, $length, $getObj);
-    public function buildSearchQuery($data = [], $sortColumn, $sortOder = 'asc', $start = 0, $length=null, $countOnly = false);
+    public function buildSearchQuery($data = [], $sortColumn, $sortOder = 'asc', $start = 0, $length = null, $countOnly = false);
     public function getFilterableFields();
     public function getOrderColumn($index, $mapIndex = 0);
-
 }

@@ -8,7 +8,6 @@
 
 namespace MegatronicApiBundle\Model\Service;
 
-
 use MegatronicApiBundle\Model\IResourceManager;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -123,13 +122,13 @@ abstract class ResourceManager implements IResourceManager
     protected function createOrUpdate($modelInstance, $modelData = null)
     {
         $modelForm = $this->formFactory->create($this->modelType, $modelInstance);
-        if(is_null($modelData)){
+        if (is_null($modelData)) {
             $modelForm->submit($modelInstance);
         } else {
             $modelForm->submit($modelData);
         }
 
-        if($modelForm->isSubmitted() && $modelForm->isValid()){
+        if ($modelForm->isSubmitted() && $modelForm->isValid()) {
             $this->objectManager->persist($modelInstance);
             $this->objectManager->flush();
             $this->setModelInstance($modelInstance);

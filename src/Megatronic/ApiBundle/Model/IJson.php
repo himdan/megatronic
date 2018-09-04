@@ -8,7 +8,6 @@
 
 namespace MegatronicApiBundle\Model;
 
-
 interface IJson
 {
     public function toJson();

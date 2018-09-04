@@ -12,5 +12,4 @@ class MegatronicResourceControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', '/list');
     }
-
 }

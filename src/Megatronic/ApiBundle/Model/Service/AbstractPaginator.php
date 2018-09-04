@@ -8,13 +8,12 @@
 
 namespace MegatronicApiBundle\Model\Service;
 
-
 use MegatronicApiBundle\Model\IPaginate;
 use MegatronicApiBundle\Model\ISearch;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 
-abstract  class AbstractPaginator implements IPaginate
+abstract class AbstractPaginator implements IPaginate
 {
 
     /**
@@ -26,11 +25,13 @@ abstract  class AbstractPaginator implements IPaginate
         $this->om = $om;
     }
 
-    public function paginate($metaClassName, $filters = array(),
-                             $getObj = false,
-                             $injectFilter = false,
-                             $orderSet = 0)
-    {
+    public function paginate(
+        $metaClassName,
+        $filters = array(),
+        $getObj = false,
+        $injectFilter = false,
+        $orderSet = 0
+    ) {
         /**
          * @var ISearch $repository
          */
@@ -49,7 +50,6 @@ abstract  class AbstractPaginator implements IPaginate
         $start = $pagination_params['start'];
 
         return $repository->search($filters, $orderColumn, $orderDirection, $start, $length, $getObj);
-
     }
 
     private function checkRepository(ObjectRepository $repository)
@@ -65,9 +65,7 @@ abstract  class AbstractPaginator implements IPaginate
         }
     }
 
-    protected abstract function getPaginationParams();
-    protected abstract function getOrderParams(ISearch $repository, $orderSet);
-    protected abstract function getFilters(ISearch $repository, $filters);
-
-
+    abstract protected function getPaginationParams();
+    abstract protected function getOrderParams(ISearch $repository, $orderSet);
+    abstract protected function getFilters(ISearch $repository, $filters);
 }

@@ -8,7 +8,6 @@
 
 namespace MegatronicApiBundle\Model\Repository;
 
-
 use MegatronicApiBundle\Model\IJson;
 
 trait SearchTrait
@@ -47,7 +46,7 @@ trait SearchTrait
      */
     public function toJson($object)
     {
-        if($object instanceof IJson){
+        if ($object instanceof IJson) {
             return $object->toJson();
         } else {
             return [];
@@ -72,5 +71,4 @@ trait SearchTrait
         return (isset($this->columnMaps[$mapIndex]) && is_array($this->columnMaps[$mapIndex])) ?
             $this->columnMaps[$mapIndex][$index] : $this->columnMaps[$index];
     }
-
 }

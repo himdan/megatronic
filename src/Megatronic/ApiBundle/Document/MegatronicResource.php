@@ -151,6 +151,4 @@ class MegatronicResource
         $this->applications = $applications;
         return $this;
     }
-
-
 }

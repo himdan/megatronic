@@ -8,7 +8,6 @@
 
 namespace MegatronicApiBundle\Service;
 
-
 use MegatronicApiBundle\Model\ISearch;
 use MegatronicApiBundle\Model\Service\AbstractPaginator;
 use Doctrine\Common\Persistence\ObjectManager;

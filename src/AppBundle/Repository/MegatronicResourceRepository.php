@@ -8,7 +8,6 @@
 
 namespace AppBundle\Repository;
 
-
 use AppBundle\Model\Repository\AbstractDocumentRepository;
 
 class MegatronicResourceRepository extends AbstractDocumentRepository
@@ -49,9 +48,4 @@ class MegatronicResourceRepository extends AbstractDocumentRepository
         $qb->sort($sortColumn, $sortOrder);
         return $qb->getQuery();
     }
-
-
-
-
-
 }

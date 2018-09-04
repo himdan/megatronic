@@ -8,11 +8,10 @@
 
 namespace MegatronicApiBundle\Model\Repository;
 
-
 use MegatronicApiBundle\Model\ISearch;
 use Doctrine\ORM\EntityRepository;
 
- abstract  class AbstractEntityRepository extends EntityRepository implements ISearch
+abstract class AbstractEntityRepository extends EntityRepository implements ISearch
 {
     use SearchTrait;
 }
