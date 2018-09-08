@@ -26,7 +26,7 @@ trait SearchTrait
      */
     public function search($filters, $sortColumn, $sortOrder = 'asc', $page = 0, $max = null, $getObj = false)
     {
-        $recordsTotal = $this->buildSearchQuery($filters, $sortColumn, 'asc', 0, null, true)->execute();
+        $recordsTotal = $this->buildSearchQuery([], $sortColumn, 'asc', 0, null, true)->execute();
         if (count(array_filter($filters))) {
             $recordsFiltered = $this->buildSearchQuery($filters, $sortColumn, 'asc', 0, null, true)->execute();
         } else {
