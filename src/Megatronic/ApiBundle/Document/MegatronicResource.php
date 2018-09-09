@@ -9,13 +9,14 @@
 namespace MegatronicApiBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use MegatronicApiBundle\Model\IJson;
 
 /**
  * Class MegatronicResource
  * @package MegatronicApiBundle\Document
  * @ODM\Document(collection="MegatronicResource",repositoryClass="MegatronicApiBundle\Repository\MegatronicResourceRepository")
  */
-class MegatronicResource
+class MegatronicResource implements IJson
 {
 
     /**
@@ -55,7 +56,7 @@ class MegatronicResource
     }
 
     /**
-     * @return ODM\Id
+     * @return int
      */
     public function getId()
     {
@@ -150,5 +151,17 @@ class MegatronicResource
     {
         $this->applications = $applications;
         return $this;
+    }
+
+    public function toJson()
+    {
+        return [
+            'id' => $this->getId(),
+            'type' => $this->getType(),
+            'extension' => $this->getExtension(),
+            'meta' => $this->getMeta(),
+            'description' => $this->getDescription(),
+            'applications' => $this->getApplications()
+        ];
     }
 }

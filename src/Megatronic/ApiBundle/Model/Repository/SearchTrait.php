@@ -61,6 +61,11 @@ trait SearchTrait
         return $this->filtrableFields;
     }
 
+    public function getFiltrableFieldMap($index)
+    {
+        return(array_key_exists($index, $this->filtrableFields))?$this->filtrableFields[$index]:'';
+    }
+
     /**
      * @param $index
      * @param int $mapIndex

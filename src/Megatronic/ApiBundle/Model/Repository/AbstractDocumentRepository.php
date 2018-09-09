@@ -35,16 +35,21 @@ abstract class AbstractDocumentRepository extends DocumentRepository implements 
     protected function populateQb(Builder $qb, $data)
     {
         foreach ($data as $fieldName => $fieldValue) {
+            if ($fieldName === 'locale') {
+                continue;
+            }
             if (isset($fieldValue)) {
-                $qb->field($this->getOrderColumn($fieldName));
                 if (false !==strpos('_like', $fieldName)) {
                     // case insensitive
+                    $qb->field($this->getOrderColumn($fieldName));
                     $qb->equals(new \MongoRegex('/'.$fieldValue.'/i'));
                 } elseif (false !== strpos('_gen', $fieldName)) {
                     // case insensitive and generic
+                    $qb->field($this->getOrderColumn($fieldName));
                     $qb->equals(new \MongoRegex('/.*'.$fieldValue.'.*/i'));
                 } else {
                     // case sentitive and equality
+                    $qb->field($this->getOrderColumn($fieldName));
                     $qb->equals($fieldValue);
                 }
             }
