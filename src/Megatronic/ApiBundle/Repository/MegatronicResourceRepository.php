@@ -8,7 +8,6 @@
 
 namespace MegatronicApiBundle\Repository;
 
-
 use MegatronicApiBundle\Model\Repository\AbstractDocumentRepository;
 
 class MegatronicResourceRepository extends AbstractDocumentRepository

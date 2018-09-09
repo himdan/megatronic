@@ -66,9 +66,8 @@ trait SearchTrait
      * @param int $mapIndex
      * @return mixed
      */
-    public function getOrderColumn($index, $mapIndex = 0)
+    public function getOrderColumn($index)
     {
-        return (isset($this->columnMaps[$mapIndex]) && is_array($this->columnMaps[$mapIndex])) ?
-            $this->columnMaps[$mapIndex][$index] : $this->columnMaps[$index];
+        return(array_key_exists($index, $this->columnMaps))?$this->columnMaps[$index]:$this->columnMaps[0];
     }
 }

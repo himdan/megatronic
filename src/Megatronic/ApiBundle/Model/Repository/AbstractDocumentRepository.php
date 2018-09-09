@@ -34,14 +34,13 @@ abstract class AbstractDocumentRepository extends DocumentRepository implements 
      */
     protected function populateQb(Builder $qb, $data)
     {
-        foreach ($data as $fieldName => $fieldValue)
-        {
-            if(isset($fieldValue)){
+        foreach ($data as $fieldName => $fieldValue) {
+            if (isset($fieldValue)) {
                 $qb->field($this->getOrderColumn($fieldName));
-                if(false !==strpos('_like', $fieldName)){
+                if (false !==strpos('_like', $fieldName)) {
                     // case insensitive
                     $qb->equals(new \MongoRegex('/'.$fieldValue.'/i'));
-                } elseif(false !== strpos('_gen', $fieldName)) {
+                } elseif (false !== strpos('_gen', $fieldName)) {
                     // case insensitive and generic
                     $qb->equals(new \MongoRegex('/.*'.$fieldValue.'.*/i'));
                 } else {
@@ -59,12 +58,11 @@ abstract class AbstractDocumentRepository extends DocumentRepository implements 
     {
         $classMetaData = $this->getClassMetadata();
         $this->columnMaps[0] = 'id';
-        foreach ($classMetaData->fieldMappings as $fieldName => $meta)
-        {
-            if(!isset($meta['type']) || "string" === strtolower($meta['type']) || "integer" === strtolower($meta['type'])){
+        foreach ($classMetaData->fieldMappings as $fieldName => $meta) {
+            if (!isset($meta['type']) || "string" === strtolower($meta['type']) || "integer" === strtolower($meta['type'])) {
                 //case senstive and equal
                 $this->columnMaps[$fieldName] = $fieldName;
-                // case insenstive and like 
+                // case insenstive and like
                 $genericIndex = sprintf('%s_gen', $fieldName);
                 $this->columnMaps[$genericIndex] = $fieldName;
                 // case simple like
@@ -82,12 +80,11 @@ abstract class AbstractDocumentRepository extends DocumentRepository implements 
     protected function buildFiltrableFields()
     {
         $classMetaData = $this->getClassMetadata();
-        foreach ($classMetaData->fieldMappings as $fieldName => $meta)
-        {
-            if(!isset($meta['type']) || "string" === strtolower($meta['type']) || "integer" === strtolower($meta['type'])){
+        foreach ($classMetaData->fieldMappings as $fieldName => $meta) {
+            if (!isset($meta['type']) || "string" === strtolower($meta['type']) || "integer" === strtolower($meta['type'])) {
                 //case senstive and equal
                 $this->filtrableFields[$fieldName] = self::EMPTY_SET;
-                // case insenstive and like 
+                // case insenstive and like
                 $genericIndex = sprintf('%s_gen', $fieldName);
                 $this->filtrableFields[$genericIndex] = self::EMPTY_SET;
                 // case simple like
@@ -121,5 +118,4 @@ abstract class AbstractDocumentRepository extends DocumentRepository implements 
         $qb->sort($sortColumn, $sortOrder);
         return $qb->getQuery();
     }
-
 }
