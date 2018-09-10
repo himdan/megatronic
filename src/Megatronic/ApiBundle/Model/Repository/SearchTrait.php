@@ -26,9 +26,9 @@ trait SearchTrait
      */
     public function search($filters, $sortColumn, $sortOrder = 'asc', $page = 0, $max = null, $getObj = false)
     {
-        $recordsTotal = $this->buildSearchQuery([], $sortColumn, 'asc', 0, null, true)->execute();
+        $recordsTotal = $this->simpleCount([]);
         if (count(array_filter($filters))) {
-            $recordsFiltered = $this->buildSearchQuery($filters, $sortColumn, 'asc', 0, null, true)->execute();
+            $recordsFiltered = $this->simpleCount($filters);
         } else {
             $recordsFiltered = $recordsTotal;
         }
@@ -74,5 +74,32 @@ trait SearchTrait
     public function getOrderColumn($index)
     {
         return(array_key_exists($index, $this->columnMaps))?$this->columnMaps[$index]:$this->columnMaps[0];
+    }
+
+    /**
+     * @param array $filter
+     * @return array
+     */
+    public function simpleSearch($filter = [])
+    {
+        return $this->search($filter, $this->getOrderColumn(0));
+    }
+
+    /**
+     * @param array $filter
+     * @return array
+     */
+    public function simpleObjectSearch($filter = [])
+    {
+        return $this->search($filter, $this->getOrderColumn(0),'asc',0, null, true);
+    }
+
+    /**
+     * @param array $filter
+     * @return mixed
+     */
+    public function simpleCount($filter = [])
+    {
+        return  $this->buildSearchQuery($filter, $this->getOrderColumn(0), 'asc', 0, null, true)->execute();
     }
 }

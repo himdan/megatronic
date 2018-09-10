@@ -35,22 +35,30 @@ abstract class AbstractDocumentRepository extends DocumentRepository implements 
     protected function populateQb(Builder $qb, $data)
     {
         foreach ($data as $fieldName => $fieldValue) {
-            if ($fieldName === 'locale') {
+            if (!array_key_exists($fieldName, $this->filtrableFields)) {
                 continue;
             }
             if (isset($fieldValue)) {
                 if (false !==strpos('_like', $fieldName)) {
                     // case insensitive
-                    $qb->field($this->getOrderColumn($fieldName));
-                    $qb->equals(new \MongoRegex('/'.$fieldValue.'/i'));
+                    $qb
+                        ->field($this->getOrderColumn($fieldName))
+                        ->equals(new \MongoRegex('/'.$fieldValue.'/i'));
                 } elseif (false !== strpos('_gen', $fieldName)) {
                     // case insensitive and generic
-                    $qb->field($this->getOrderColumn($fieldName));
-                    $qb->equals(new \MongoRegex('/.*'.$fieldValue.'.*/i'));
+                    $qb
+                        ->field($this->getOrderColumn($fieldName))
+                        ->equals(new \MongoRegex('/.*'.$fieldValue.'.*/i'));
+                } elseif (false !== strpos('_in', $fieldName) && is_array($fieldValue)) {
+                    // cas hash attribute
+                    $qb
+                        ->field($this->getOrderColumn($fieldName))
+                        ->equals($fieldValue);
                 } else {
                     // case sentitive and equality
-                    $qb->field($this->getOrderColumn($fieldName));
-                    $qb->equals($fieldValue);
+                    $qb
+                        ->field($this->getOrderColumn($fieldName))
+                        ->equals($fieldValue);
                 }
             }
         }
@@ -74,6 +82,11 @@ abstract class AbstractDocumentRepository extends DocumentRepository implements 
                 $likeIndex = sprintf('%s_like', $fieldName);
                 $this->columnMaps[$likeIndex] = $fieldName;
             }
+            //meta type hash case
+            if ("hash" === strtolower($meta['type'])) {
+                $inIndex = sprintf('%s_in', $fieldName);
+                $this->columnMaps[$inIndex] = $fieldName;
+            }
         }
     }
 
@@ -86,6 +99,7 @@ abstract class AbstractDocumentRepository extends DocumentRepository implements 
     {
         $classMetaData = $this->getClassMetadata();
         foreach ($classMetaData->fieldMappings as $fieldName => $meta) {
+            // meta type string case
             if (!isset($meta['type']) || "string" === strtolower($meta['type']) || "integer" === strtolower($meta['type'])) {
                 //case senstive and equal
                 $this->filtrableFields[$fieldName] = self::EMPTY_SET;
@@ -95,6 +109,11 @@ abstract class AbstractDocumentRepository extends DocumentRepository implements 
                 // case simple like
                 $likeIndex = sprintf('%s_like', $fieldName);
                 $this->filtrableFields[$likeIndex] = self::EMPTY_SET;
+            }
+            //meta type hash case
+            if ("hash" === strtolower($meta['type'])) {
+                $genericIndex = sprintf('%s_in', $fieldName);
+                $this->filtrableFields[$genericIndex] = self::EMPTY_SET;
             }
         }
     }
