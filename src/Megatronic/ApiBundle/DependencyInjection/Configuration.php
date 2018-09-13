@@ -2,6 +2,7 @@
 
 namespace MegatronicApiBundle\DependencyInjection;
 
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -19,11 +20,33 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('megatronic_api');
-
-        // Here you should define the parameters that are allowed to
-        // configure your bundle. See the documentation linked above for
-        // more information on that topic.
+        $this->getPaginationNode($rootNode);
 
         return $treeBuilder;
     }
+
+    /**
+     * @param ArrayNodeDefinition $rootNode
+     */
+    protected function getPaginationNode($rootNode)
+    {
+        $rootNode
+            ->children()
+            ->arrayNode('pagination')
+            ->children()
+            ->scalarNode('page')
+            ->defaultValue('start')
+            ->end()
+            ->scalarNode('itemPerPage')
+            ->defaultValue('length')
+            ->end()
+            ->scalarNode('orderColumn')
+            ->defaultValue('column')
+            ->end()
+            ->scalarNode('orderDirection')
+            ->defaultValue('dir')
+            ->end();
+    }
+
+
 }

@@ -10,7 +10,9 @@ namespace MegatronicApiBundle\Model\Controller;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 abstract class MegatronicBaseController extends Controller implements ICrud
 {
@@ -64,18 +66,26 @@ abstract class MegatronicBaseController extends Controller implements ICrud
     /**
      * Override to implement the way how to handle Exception
      * @param \Exception $e
-     * @return mixed
+     * @return Response
      */
     abstract protected function handleException(\Exception $e);
 
     /**
      * Overrid to implement the way to handle invalid data and failed Constraint
+     * @return Response
      */
-    abstract protected function handleInvalid();
+    abstract protected function handleInvalid(FormInterface $form);
+    /**
+     * Overrid to implement the way to handle success Response
+     * @return Response
+     */
+    abstract protected function handleSuccess($object = null);
 
     /**
      * Manager abstraction Layer
      * @return ObjectManager
      */
     abstract protected function getObjectManager();
+
+
 }

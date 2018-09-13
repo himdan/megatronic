@@ -33,7 +33,7 @@ trait CrudTrait
         if ($modelForm->isValid() && $modelForm->isSubmitted()) {
              return $this->saveData($modelInstance);
         } else {
-            return $this->handleInvalid();
+            return $this->handleInvalid($modelForm);
         }
     }
 
@@ -52,7 +52,7 @@ trait CrudTrait
         if ($modelForm->isValid() && $modelForm->isSubmitted()) {
             return $this->saveData($modelInstance);
         } else {
-            return $this->handleInvalid();
+            return $this->handleInvalid($modelForm);
         }
     }
 
@@ -71,7 +71,7 @@ trait CrudTrait
         if ($modelForm->isValid() && $modelForm->isSubmitted()) {
             return $this->saveData($modelInstance);
         } else {
-            $this->handleInvalid();
+            $this->handleInvalid($modelForm);
         }
     }
 
@@ -82,13 +82,13 @@ trait CrudTrait
     public function delete($object)
     {
         /**
-         * @var ObjectManager $dm
+         * @var ObjectManager $oM
          */
-        $dm = $this->get('doctrine_mongodb.odm.document_manager');
-        $dm->persist($object);
+        $oM= $this->getObjectManager();
+        $oM->persist($object);
         try {
-            $dm->flush();
-            return $object;
+            $oM->flush();
+            return $this->handleSuccess($object);
         } catch (\Exception $e) {
             return $this->handleException($e);
         }
@@ -101,13 +101,13 @@ trait CrudTrait
     private function saveData($object)
     {
         /**
-         * @var ObjectManager $dm
+         * @var ObjectManager $oM
          */
-        $dm = $this->getObjectManager();
-        $dm->remove($object);
+        $oM= $this->getObjectManager();
+        $oM->remove($object);
         try {
-            $dm->flush();
-            return $object;
+            $oM->flush();
+            return $this->handleSuccess($object);
         } catch (\Exception $e) {
             return $this->handleException($e);
         }

@@ -82,8 +82,8 @@ abstract class AbstractDocumentRepository extends DocumentRepository implements 
                 $likeIndex = sprintf('%s_like', $fieldName);
                 $this->columnMaps[$likeIndex] = $fieldName;
             }
-            //meta type hash case
-            if ("hash" === strtolower($meta['type'])) {
+            //collection type
+            if ("collection" === strtolower($meta['type'])) {
                 $inIndex = sprintf('%s_in', $fieldName);
                 $this->columnMaps[$inIndex] = $fieldName;
             }
@@ -110,8 +110,22 @@ abstract class AbstractDocumentRepository extends DocumentRepository implements 
                 $likeIndex = sprintf('%s_like', $fieldName);
                 $this->filtrableFields[$likeIndex] = self::EMPTY_SET;
             }
-            //meta type hash case
-            if ("hash" === strtolower($meta['type'])) {
+            //meta type date case
+            if("date" === strtolower($meta['type'])){
+                // case Equal
+                $this->filtrableFields[$fieldName] = self::EMPTY_SET;
+                //case low or equals
+                $letIndex = sprintf('%s_let', $fieldName);
+                $this->filtrableFields[$letIndex] = self::EMPTY_SET;
+                //case  lower then
+                $ltIndex = sprintf('%s_lt', $fieldName);
+                $this->filtrableFields[$ltIndex] = self::EMPTY_SET;
+                //case greater or equal
+                $getIndex = sprintf('%s_gte', $fieldName);
+                $this->filtrableFields[$getIndex] = self::EMPTY_SET;
+            }
+            //meta type hash
+            if ("collection" === strtolower($meta['type'])) {
                 $genericIndex = sprintf('%s_in', $fieldName);
                 $this->filtrableFields[$genericIndex] = self::EMPTY_SET;
             }

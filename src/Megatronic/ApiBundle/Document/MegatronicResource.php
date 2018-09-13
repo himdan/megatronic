@@ -46,7 +46,7 @@ class MegatronicResource implements IJson
     protected $extension;
     /**
      * @var array
-     * @ODM\Field(type="hash")
+     * @ODM\Field(type="collection")
      */
     protected $applications;
 
