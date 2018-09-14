@@ -221,6 +221,6 @@ abstract class AbstractDocumentRepository extends DocumentRepository implements 
     }
     protected function refIn($fieldName, &$pos)
     {
-        return (false !== $pos=strpos($fieldName, 'refIn'));
+        return (false !== $pos=strpos($fieldName, '_refIn'));
     }
 }
