@@ -8,7 +8,6 @@
 
 namespace MegatronicApiBundle\Model;
 
-
 use Symfony\Component\Form\AbstractType;
 
 class AbstractMegatronicType extends AbstractType
@@ -22,5 +21,4 @@ class AbstractMegatronicType extends AbstractType
     {
         return '';
     }
-
 }

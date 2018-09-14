@@ -47,6 +47,4 @@ class Configuration implements ConfigurationInterface
             ->defaultValue('dir')
             ->end();
     }
-
-
 }

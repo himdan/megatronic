@@ -10,6 +10,7 @@ namespace MegatronicApiBundle\DataFixtures\MongoDB;
 
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use MegatronicApiBundle\Document\MegatronicContext;
 use MegatronicApiBundle\Document\MegatronicResource;
 use MegatronicApiBundle\Document\MegatronicUser;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -58,14 +59,26 @@ class Fixtures implements FixtureInterface, ContainerAwareInterface
     }
     protected function loadResources(ObjectManager $manager)
     {
+        $context1 = new MegatronicContext();
+        $this->loadContext($manager, $context1);
+
         $resouce1 = new MegatronicResource();
         $resouce1
             ->setType('application/text')
             ->setDescription('test File 1')
             ->setExtension('txt')
             ->setMeta('raw')
-            ->setApplications(['app1','app2']);
+            ->setApplications(['app1','app2'])
+            ->setContext($context1);
         $manager->persist($resouce1);
+        $manager->flush();
+    }
+
+    protected function loadContext(ObjectManager $manager, MegatronicContext $context1)
+    {
+
+        $context1->setName('download');
+        $manager->persist($context1);
         $manager->flush();
     }
 }

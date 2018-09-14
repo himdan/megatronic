@@ -8,6 +8,7 @@
 
 namespace MegatronicApiBundle\Document;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use MegatronicApiBundle\Model\IJson;
 
@@ -49,10 +50,21 @@ class MegatronicResource implements IJson
      * @ODM\Field(type="collection")
      */
     protected $applications;
+    /**
+     * @var MegatronicContext
+     * @ODM\ReferenceOne(targetDocument="MegatronicContext")
+     */
+    protected $context;
+    /**
+     * @var ArrayCollection
+     * @ODM\ReferenceMany(targetDocument="MegatronicUser")
+     */
+    protected $downloaders;
 
     public function __construct()
     {
         $this->applications = [];
+        $this->downloaders = new ArrayCollection();
     }
 
     /**
@@ -150,6 +162,42 @@ class MegatronicResource implements IJson
     public function setApplications($applications)
     {
         $this->applications = $applications;
+        return $this;
+    }
+
+    /**
+     * @return MegatronicContext
+     */
+    public function getContext()
+    {
+        return $this->context;
+    }
+
+    /**
+     * @param MegatronicContext $context
+     * @return MegatronicResource
+     */
+    public function setContext($context)
+    {
+        $this->context = $context;
+        return $this;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getDownloaders()
+    {
+        return $this->downloaders;
+    }
+
+    /**
+     * @param ArrayCollection $downloaders
+     * @return MegatronicResource
+     */
+    public function setDownloaders($downloaders)
+    {
+        $this->downloaders = $downloaders;
         return $this;
     }
 

@@ -86,6 +86,4 @@ abstract class MegatronicBaseController extends Controller implements ICrud
      * @return ObjectManager
      */
     abstract protected function getObjectManager();
-
-
 }

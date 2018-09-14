@@ -91,7 +91,7 @@ trait SearchTrait
      */
     public function simpleObjectSearch($filter = [])
     {
-        return $this->search($filter, $this->getOrderColumn(0),'asc',0, null, true);
+        return $this->search($filter, $this->getOrderColumn(0), 'asc', 0, null, true);
     }
 
     /**
