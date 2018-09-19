@@ -21,6 +21,19 @@ abstract class AbstractDocumentRepository extends DocumentRepository implements 
 
     use SearchTrait;
     const EMPTY_SET = 'empty';
+    const DELIMTER = '_';
+    /**
+     * SUFFIX agregat
+     */
+    const CASE_UNSENSITIVE = 'like';
+    const LIKE_UNSENSITIVE = 'gen';
+    const IN_SET = 'in';
+    const LOWER_EQUAL = 'let';
+    const LOWER_THAN = 'lt';
+    const GREATER_EQUAL = 'get';
+    const GREATER_THAN = 'gt';
+    const REFERENCE_IN = 'refIn';
+
     public function __construct(DocumentManager $dm, UnitOfWork $uow, ClassMetadata $classMetadata)
     {
         parent::__construct($dm, $uow, $classMetadata);
@@ -40,31 +53,35 @@ abstract class AbstractDocumentRepository extends DocumentRepository implements 
                 continue;
             }
             if (isset($fieldValue)) {
-                if (false !==strpos($fieldName, '_like')) {
+                if ($this->isMapedFilter($fieldName, $this->buildSuffix(self::CASE_UNSENSITIVE))) {
                     // case insensitive
                     $qb
                         ->field($this->getOrderColumn($fieldName))
                         ->equals(new \MongoRegex('/'.$fieldValue.'/i'));
-                } elseif (false !== strpos($fieldName, '_gen')) {
+                } elseif ($this->isMapedFilter($fieldName, $this->buildSuffix(self::LIKE_UNSENSITIVE))) {
                     // case insensitive and generic
                     $qb
                         ->field($this->getOrderColumn($fieldName))
                         ->equals(new \MongoRegex('/.*'.$fieldValue.'.*/i'));
-                } elseif (false !== strpos('_in', $fieldName) && is_array($fieldValue)) {
-                    // cas hash attribute
+                } elseif ($this->isMapedFilter($fieldName, $this->buildSuffix(self::IN_SET)) && is_array($fieldValue)) {
+                    // case collection attribute
                     $qb
                         ->field($this->getOrderColumn($fieldName))
-                        ->equals($fieldValue);
-                } elseif (($this->refIn($fieldName, $pos))&& is_array($fieldValue)) {
+                        ->in($fieldValue);
+                } elseif ($this->isMapedFilter($fieldName, $this->buildSuffix(self::REFERENCE_IN))&& is_array($fieldValue)) {
                     //case reference one with criteria
-
-                    $prop = (explode('_', $fieldName))[0];
-                    $associatedRepository = $this->resolveRepositoryByPropertyName($prop);
-                    $ids = $associatedRepository->filterIdsByCriteria($fieldValue);
+                    $prop = (explode(self::DELIMTER, $fieldName))[0];
+                    try {
+                        $associatedRepository = $this->resolveRepositoryByPropertyName($prop);
+                        $ids = $associatedRepository->filterIdsByCriteria($fieldValue);
+                    } catch (\Exception $exception) {
+                        $ids = [];
+                    }
                     $qb
                         ->field(sprintf('%s.id', $prop))
                         ->in($ids);
                 } else {
+                    //perfect match
                     $qb
                         ->field($this->getOrderColumn($fieldName))
                         ->equals($fieldValue);
@@ -85,15 +102,15 @@ abstract class AbstractDocumentRepository extends DocumentRepository implements 
                 //case senstive and equal
                 $this->columnMaps[$fieldName] = $fieldName;
                 // case insenstive and like
-                $genericIndex = sprintf('%s_gen', $fieldName);
+                $genericIndex = sprintf('%s%s', $fieldName, $this->buildSuffix(self::CASE_UNSENSITIVE));
                 $this->columnMaps[$genericIndex] = $fieldName;
                 // case simple like
-                $likeIndex = sprintf('%s_like', $fieldName);
+                $likeIndex = sprintf('%s%s', $fieldName, $this->buildSuffix(self::LIKE_UNSENSITIVE));
                 $this->columnMaps[$likeIndex] = $fieldName;
             }
             //collection type
             if ("collection" === strtolower($meta['type'])) {
-                $inIndex = sprintf('%s_in', $fieldName);
+                $inIndex = sprintf('%s%s', $fieldName, $this->buildSuffix(self::IN_SET));
                 $this->columnMaps[$inIndex] = $fieldName;
             }
         }
@@ -101,7 +118,7 @@ abstract class AbstractDocumentRepository extends DocumentRepository implements 
             $isReference = $meta['reference'] === true;
             $isOne = $meta['association'] === ClassMetadataInfo::REFERENCE_ONE;
             if ($isReference&&$isOne) {
-                $genericIndex = sprintf('%s_refIn', $fieldName);
+                $genericIndex = sprintf('%s%s', $fieldName, $this->buildSuffix(self::REFERENCE_IN));
                 $this->columnMaps[$genericIndex] = $fieldName;
             }
         }
@@ -121,10 +138,10 @@ abstract class AbstractDocumentRepository extends DocumentRepository implements 
                 //case senstive and equal
                 $this->filtrableFields[$fieldName] = self::EMPTY_SET;
                 // case insenstive and like
-                $genericIndex = sprintf('%s_gen', $fieldName);
+                $genericIndex = sprintf('%s%s', $fieldName, $this->buildSuffix(self::CASE_UNSENSITIVE));
                 $this->filtrableFields[$genericIndex] = self::EMPTY_SET;
                 // case simple like
-                $likeIndex = sprintf('%s_like', $fieldName);
+                $likeIndex = sprintf('%s%s', $fieldName, $this->buildSuffix(self::LIKE_UNSENSITIVE));
                 $this->filtrableFields[$likeIndex] = self::EMPTY_SET;
             }
             //meta type date case
@@ -132,18 +149,20 @@ abstract class AbstractDocumentRepository extends DocumentRepository implements 
                 // case Equal
                 $this->filtrableFields[$fieldName] = self::EMPTY_SET;
                 //case low or equals
-                $letIndex = sprintf('%s_let', $fieldName);
+                $letIndex = sprintf('%s%s', $fieldName, $this->buildSuffix(self::LOWER_EQUAL));
                 $this->filtrableFields[$letIndex] = self::EMPTY_SET;
                 //case  lower then
-                $ltIndex = sprintf('%s_lt', $fieldName);
+                $ltIndex = sprintf('%s%s', $fieldName, $this->buildSuffix(self::LOWER_THAN));
                 $this->filtrableFields[$ltIndex] = self::EMPTY_SET;
                 //case greater or equal
-                $getIndex = sprintf('%s_gte', $fieldName);
+                $getIndex = sprintf('%s%s', $fieldName, $this->buildSuffix(self::GREATER_EQUAL));
                 $this->filtrableFields[$getIndex] = self::EMPTY_SET;
+                $gtIndex = sprintf('%s%s', $fieldName, $this->buildSuffix(self::GREATER_THAN));
+                $this->filtrableFields[$gtIndex] = self::EMPTY_SET;
             }
             //meta type collection
             if ("collection" === strtolower($meta['type'])) {
-                $genericIndex = sprintf('%s_in', $fieldName);
+                $genericIndex = sprintf('%s%s', $fieldName, $this->buildSuffix(self::IN_SET));
                 $this->filtrableFields[$genericIndex] = self::EMPTY_SET;
             }
         }
@@ -151,7 +170,7 @@ abstract class AbstractDocumentRepository extends DocumentRepository implements 
             $isReference = $meta['reference'] === true;
             $isOne = $meta['association'] === ClassMetadataInfo::REFERENCE_ONE;
             if ($isReference&&$isOne) {
-                $genericIndex = sprintf('%s_refIn', $fieldName);
+                $genericIndex = sprintf('%s%s', $fieldName, $this->buildSuffix(self::REFERENCE_IN));
                 $this->filtrableFields[$genericIndex] = self::EMPTY_SET;
             }
         }
@@ -184,6 +203,7 @@ abstract class AbstractDocumentRepository extends DocumentRepository implements 
 
     /**
      * @param $property
+     * @return mixed
      */
     protected function resolveMetaByPropertyName($property)
     {
@@ -215,12 +235,29 @@ abstract class AbstractDocumentRepository extends DocumentRepository implements 
         $q = $qb->getQuery();
         $ids = [];
         foreach ($q->execute() as $object) {
-            array_push($ids, $object->getId());
+            if (method_exists($object, 'getId')) {
+                array_push($ids, $object->getId());
+            }
         }
         return $ids;
     }
-    protected function refIn($fieldName, &$pos)
+
+    /**
+     * @param $suffixEnd
+     * @return string
+     */
+    protected function buildSuffix($suffixEnd)
     {
-        return (false !== $pos=strpos($fieldName, '_refIn'));
+        return sprintf('%s%s', self::DELIMTER, $suffixEnd);
+    }
+
+    /**
+     * @param $fieldName
+     * @param $mapedSuffix
+     * @return bool
+     */
+    protected function isMapedFilter($fieldName, $mapedSuffix)
+    {
+        return false !== strpos($fieldName, $mapedSuffix);
     }
 }
