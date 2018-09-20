@@ -3,4 +3,20 @@ megatronic_api_homepage:
     defaults: { _controller: MegatronicApiBundle:Default:index }
 megatronic_api_resource_list:
     path:     /resources/list
-    defaults: { _controller: MegatronicApiBundle:MegatronicResource:list }
+    defaults: { _controller: MegatronicApiBundle:Resource\MegatronicResource:list }
+megatronic_api_resource_view:
+    path:     /resources/view/{resource}
+    methods: [GET]
+    defaults: { _controller: MegatronicApiBundle:Resource\MegatronicResource:view }
+megatronic_api_resource_create:
+    methods: [POST]
+    path:     /resources/create
+    defaults: { _controller: MegatronicApiBundle:Resource\MegatronicResource:create }
+megatronic_api_resource_update:
+    methods: [POST, PUT]
+    path:     /resources/update/{id}
+    defaults: { _controller: MegatronicApiBundle:Resource\MegatronicResource:update }
+megatronic_api_resource_delete:
+    methods: [POST, DELETE]
+    path:     /resources/delete/{id}
+    defaults: { _controller: MegatronicApiBundle:Resource\MegatronicResource:delete }

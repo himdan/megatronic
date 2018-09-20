@@ -9,15 +9,27 @@
 namespace MegatronicApiBundle\Model\Controller;
 
 use Doctrine\Common\Persistence\ObjectManager;
+use MegatronicApiBundle\Model\IJson;
+use MegatronicApiBundle\Service\Paginator;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-abstract class MegatronicBaseController extends Controller implements ICrud
+abstract class MegatronicCrudController extends Controller implements ICrud
 {
     use CrudTrait;
+    use ListTrait;
 
+    public function listAction(Paginator $paginator)
+    {
+        try {
+            $data = $this->readJson($paginator, true);
+            return $this->handleSuccess($data);
+        } catch (\Exception $e) {
+            return $this->handleException($e);
+        }
+    }
     /**
      * @param Request $request
      * @return mixed
@@ -86,4 +98,19 @@ abstract class MegatronicBaseController extends Controller implements ICrud
      * @return ObjectManager
      */
     abstract protected function getObjectManager();
+
+    /**
+     * @param null $object
+     * @return array|null
+     */
+    public function parseObjectAsJson($object = null)
+    {
+        $data = [];
+        if (is_array($object)) {
+            $data = $object;
+        } elseif ($object instanceof IJson) {
+            $data = $object->toJson();
+        }
+        return $data;
+    }
 }
